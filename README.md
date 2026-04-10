@@ -2,7 +2,7 @@
 
 > Turn a rough idea into a ready-to-post Instagram creative in seconds.
 
-a full-stack AI-powered studio that generates polished social media content for educational brands targeting Indian parents.
+A full-stack AI-powered studio that generates polished social media content for educational brands targeting Indian parents.
 
 **Live Demo:** [your-app.onrender.com](https://your-app.onrender.com)  
 **Video Walkthrough:** [loom link here]
@@ -188,6 +188,16 @@ app.listen(PORT);
 
 ---
 
+<<<<<<< Updated upstream
+=======
+## What I Would Add With More Time
+
+- AI image generation per slide (Stable Diffusion / Together AI)
+- Export full carousel as ZIP
+- Brand preset switching (not just Cuemath)
+- Save and revisit past generations
+- Multi-language support (Hindi captions)
+>>>>>>> Stashed changes
 
 ---
 
@@ -195,4 +205,9 @@ app.listen(PORT);
 
 **Pragy Upadhyay**  
 Final Year B.Tech ECE — JIIT Noida  
+<<<<<<< Updated upstream
 [LinkedIn](https://linkedin.com/in/pragy-upadhyay-893895246) · [GitHub](https://github.com/pragy34)
+=======
+[LinkedIn](https://linkedin.com/in/pragy-upadhyay-893895246) ·
+ [GitHub](https://github.com/pragy34)
+>>>>>>> Stashed changes
