@@ -1,0 +1,1201 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Social Media Studio</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --primary: #ff6b00;
+        --primary-dark: #e55f00;
+        --secondary: #1a1a2e;
+        --accent: #ffd700;
+        --surface: #ffffff;
+        --surface-soft: #fff8f2;
+        --surface-tint: #fff3e8;
+        --border: rgba(26, 26, 46, 0.1);
+        --text-soft: #5f647a;
+        --shadow: 0 24px 60px rgba(26, 26, 46, 0.08);
+        --radius-xl: 30px;
+        --radius-lg: 24px;
+        --radius-md: 18px;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        font-family: "Inter", sans-serif;
+        color: var(--secondary);
+        background:
+          radial-gradient(circle at top left, rgba(255, 107, 0, 0.14), transparent 24%),
+          radial-gradient(circle at top right, rgba(255, 215, 0, 0.14), transparent 18%),
+          linear-gradient(180deg, #fffdf8 0%, #ffffff 38%, #fff8f1 100%);
+      }
+
+      button,
+      input,
+      select,
+      textarea {
+        font: inherit;
+      }
+
+      button {
+        cursor: pointer;
+      }
+
+      .page-shell {
+        width: min(1240px, calc(100% - 32px));
+        margin: 0 auto;
+        padding: 28px 0 56px;
+      }
+
+      .hero {
+        display: grid;
+        grid-template-columns: minmax(0, 1.4fr) minmax(280px, 0.8fr);
+        gap: 20px;
+        margin-bottom: 22px;
+      }
+
+      .panel {
+        position: relative;
+        overflow: hidden;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-xl);
+        box-shadow: var(--shadow);
+      }
+
+      .hero-copy,
+      .hero-side,
+      .composer,
+      .caption-panel {
+        padding: 28px;
+      }
+
+      .hero-copy::before,
+      .hero-side::before {
+        content: "";
+        position: absolute;
+        inset: auto auto -80px -60px;
+        width: 220px;
+        height: 220px;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(255, 107, 0, 0.12), transparent 70%);
+      }
+
+      .hero-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 14px;
+        border-radius: 999px;
+        background: rgba(255, 107, 0, 0.1);
+        color: var(--primary-dark);
+        font-size: 0.86rem;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+      }
+
+      .hero-chip::before {
+        content: "";
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: var(--primary);
+      }
+
+      .hero h1 {
+        margin: 18px 0 12px;
+        font-size: clamp(2.3rem, 4vw, 4rem);
+        line-height: 0.98;
+        letter-spacing: -0.04em;
+      }
+
+      .hero p {
+        margin: 0;
+        max-width: 760px;
+        font-size: 1.04rem;
+        line-height: 1.75;
+        color: var(--text-soft);
+      }
+
+      .hero-metrics {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-top: 22px;
+      }
+
+      .metric-pill {
+        padding: 12px 14px;
+        border-radius: 18px;
+        background: var(--surface-soft);
+        border: 1px solid rgba(255, 107, 0, 0.12);
+        font-size: 0.92rem;
+        font-weight: 600;
+      }
+
+      .hero-side {
+        display: grid;
+        gap: 18px;
+      }
+
+      .hero-side h2 {
+        margin: 0;
+        font-size: 1.08rem;
+      }
+
+      .palette-row,
+      .spec-row,
+      .layout {
+        display: grid;
+        gap: 12px;
+      }
+
+      .palette-item,
+      .spec-card {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        padding: 14px 16px;
+        border-radius: 18px;
+        background: var(--surface-soft);
+      }
+
+      .swatch {
+        width: 24px;
+        height: 24px;
+        border-radius: 999px;
+        border: 2px solid rgba(26, 26, 46, 0.08);
+        flex-shrink: 0;
+      }
+
+      .composer form,
+      .field-group {
+        display: grid;
+        gap: 20px;
+      }
+
+      .section-title {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 14px;
+      }
+
+      .section-title h2 {
+        margin: 0;
+        font-size: 1.25rem;
+      }
+
+      .section-title p {
+        margin: 6px 0 0;
+        color: var(--text-soft);
+        font-size: 0.95rem;
+      }
+
+      .field-label {
+        font-size: 0.92rem;
+        font-weight: 700;
+      }
+
+      textarea,
+      input[type="text"] {
+        width: 100%;
+        border: 1px solid rgba(26, 26, 46, 0.12);
+        border-radius: 18px;
+        padding: 16px 18px;
+        background: #fff;
+        color: var(--secondary);
+        transition: border-color 180ms ease, box-shadow 180ms ease;
+      }
+
+      textarea:focus,
+      input[type="text"]:focus {
+        outline: none;
+        border-color: rgba(255, 107, 0, 0.48);
+        box-shadow: 0 0 0 4px rgba(255, 107, 0, 0.12);
+      }
+
+      #ideaInput {
+        min-height: 176px;
+        resize: vertical;
+        line-height: 1.65;
+      }
+
+      .format-picker {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 12px;
+      }
+
+      .format-pill {
+        border: 1px solid rgba(255, 107, 0, 0.14);
+        background: #fff7f0;
+        color: var(--secondary);
+        border-radius: 18px;
+        padding: 14px 16px;
+        font-weight: 700;
+        text-align: center;
+        transition:
+          transform 180ms ease,
+          background 180ms ease,
+          border-color 180ms ease,
+          color 180ms ease,
+          box-shadow 180ms ease;
+      }
+
+      .format-pill:hover {
+        transform: translateY(-1px);
+        border-color: rgba(255, 107, 0, 0.3);
+      }
+
+      .format-pill.active {
+        background: linear-gradient(135deg, var(--primary), #ff8a3a);
+        color: #fff;
+        border-color: transparent;
+        box-shadow: 0 18px 40px rgba(255, 107, 0, 0.2);
+      }
+
+      .primary-button,
+      .secondary-button,
+      .download-button {
+        border: 0;
+        border-radius: 18px;
+        transition:
+          transform 180ms ease,
+          box-shadow 180ms ease,
+          opacity 180ms ease;
+      }
+
+      .primary-button:hover,
+      .secondary-button:hover,
+      .download-button:hover {
+        transform: translateY(-1px);
+      }
+
+      .primary-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        width: 100%;
+        padding: 18px;
+        background: linear-gradient(135deg, var(--primary), #ff8a3a);
+        color: #fff;
+        font-size: 1rem;
+        font-weight: 800;
+        box-shadow: 0 20px 42px rgba(255, 107, 0, 0.2);
+      }
+
+      .primary-button:disabled,
+      .secondary-button:disabled,
+      .download-button:disabled {
+        opacity: 0.7;
+        transform: none;
+        cursor: wait;
+      }
+
+      .secondary-button {
+        padding: 14px 16px;
+        background: var(--surface-soft);
+        color: var(--secondary);
+        font-weight: 700;
+      }
+
+      .download-button {
+        padding: 12px 14px;
+        background: rgba(255, 107, 0, 0.1);
+        color: var(--primary-dark);
+        font-weight: 800;
+      }
+
+      .spinner {
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        border: 2px solid rgba(255, 255, 255, 0.35);
+        border-top-color: #fff;
+        animation: spin 0.75s linear infinite;
+        display: none;
+      }
+
+      .primary-button.loading .spinner {
+        display: inline-block;
+      }
+
+      .alert {
+        display: none;
+        padding: 14px 16px;
+        border-radius: 18px;
+        background: rgba(220, 53, 69, 0.08);
+        color: #9b2538;
+        font-size: 0.94rem;
+        line-height: 1.5;
+      }
+
+      .alert.visible {
+        display: block;
+      }
+
+      .results {
+        display: grid;
+        gap: 16px;
+      }
+
+      .results-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: end;
+        gap: 16px;
+      }
+
+      .results-header h2 {
+        margin: 0;
+        font-size: 1.25rem;
+      }
+
+      .results-header p {
+        margin: 8px 0 0;
+        color: var(--text-soft);
+      }
+
+      .slides-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: 18px;
+      }
+
+      .empty-state {
+        padding: 42px 28px;
+        border-radius: var(--radius-xl);
+        background: linear-gradient(135deg, rgba(255, 107, 0, 0.08), rgba(255, 215, 0, 0.08));
+        border: 1px dashed rgba(255, 107, 0, 0.24);
+        text-align: center;
+        color: var(--text-soft);
+      }
+
+      .slide-card {
+        display: grid;
+        gap: 18px;
+        padding: 18px;
+        border-radius: var(--radius-lg);
+        background: var(--surface);
+        border: 1px solid var(--border);
+        box-shadow: var(--shadow);
+        animation: rise 320ms ease both;
+      }
+
+      .slide-card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .slide-card-meta {
+        display: grid;
+        gap: 4px;
+      }
+
+      .slide-card-meta strong {
+        font-size: 1rem;
+      }
+
+      .slide-card-meta span {
+        font-size: 0.9rem;
+        color: var(--text-soft);
+      }
+
+      .preview-shell {
+        border-radius: 24px;
+        background: var(--surface-tint);
+        padding: 14px;
+      }
+
+      .preview-shell.story {
+        max-width: 336px;
+        margin: 0 auto;
+      }
+
+      .slide-preview {
+        position: relative;
+        width: 100%;
+        aspect-ratio: var(--preview-ratio);
+        overflow: hidden;
+        border-radius: 22px;
+        background: var(--bg-color);
+        color: var(--text-color);
+        padding: clamp(20px, 4vw, 30px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        isolation: isolate;
+      }
+
+      .slide-preview::before,
+      .slide-preview::after {
+        content: "";
+        position: absolute;
+        border-radius: 50%;
+        pointer-events: none;
+      }
+
+      .slide-preview::before {
+        width: 44%;
+        height: 44%;
+        top: -10%;
+        left: -8%;
+        background: radial-gradient(circle, rgba(255, 255, 255, 0.18), transparent 68%);
+      }
+
+      .slide-preview::after {
+        width: 38%;
+        height: 38%;
+        bottom: -12%;
+        right: -8%;
+        background: radial-gradient(circle, rgba(255, 255, 255, 0.1), transparent 70%);
+      }
+
+      .preview-copy {
+        position: relative;
+        z-index: 1;
+        display: grid;
+        gap: 14px;
+        max-width: 86%;
+      }
+
+      .preview-label {
+        font-size: 0.7rem;
+        font-weight: 700;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: var(--accent-color);
+      }
+
+      .preview-headline {
+        margin: 0;
+        font-size: clamp(1.5rem, 3.2vw, 2.45rem);
+        line-height: 1.05;
+        letter-spacing: -0.03em;
+      }
+
+      .preview-body {
+        margin: 0;
+        font-size: clamp(0.98rem, 1.7vw, 1.12rem);
+        line-height: 1.62;
+        opacity: 0.96;
+        white-space: pre-line;
+      }
+
+      .visual-pill {
+        justify-self: center;
+        max-width: 100%;
+        display: grid;
+        gap: 6px;
+        padding: 12px 14px;
+        border-radius: 18px;
+        background: rgba(255, 255, 255, 0.14);
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        backdrop-filter: blur(10px);
+      }
+
+      .visual-pill span {
+        font-size: 0.68rem;
+        font-weight: 700;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        opacity: 0.76;
+      }
+
+      .visual-pill strong {
+        font-size: 0.86rem;
+        line-height: 1.45;
+        font-weight: 600;
+      }
+
+      .preview-watermark {
+        position: absolute;
+        right: 16px;
+        bottom: 14px;
+        z-index: 1;
+        font-size: 0.74rem;
+        font-weight: 800;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        opacity: 0.92;
+      }
+
+      .preview-dots {
+        position: absolute;
+        left: 24px;
+        right: 24px;
+        bottom: 18px;
+        z-index: 1;
+        display: flex;
+        justify-content: center;
+        gap: 8px;
+      }
+
+      .preview-dots i {
+        width: 9px;
+        height: 9px;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.32);
+        display: block;
+      }
+
+      .preview-dots i.active {
+        background: var(--accent-color);
+      }
+
+      .editor-grid,
+      .editor-field {
+        display: grid;
+        gap: 12px;
+      }
+
+      .editor-field label {
+        font-size: 0.84rem;
+        font-weight: 700;
+        color: var(--text-soft);
+      }
+
+      .editor-field textarea {
+        min-height: 110px;
+        resize: vertical;
+        line-height: 1.6;
+      }
+
+      .editor-field textarea[data-field="visual_description"] {
+        min-height: 90px;
+      }
+
+      .theme-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+
+      .theme-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 12px;
+        border-radius: 14px;
+        background: var(--surface-soft);
+        color: var(--secondary);
+        font-size: 0.84rem;
+        font-weight: 700;
+      }
+
+      .theme-chip i {
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        border: 1px solid rgba(26, 26, 46, 0.08);
+        display: inline-block;
+      }
+
+      .caption-panel {
+        display: grid;
+        gap: 16px;
+      }
+
+      .caption-actions {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 14px;
+      }
+
+      .caption-actions h2 {
+        margin: 0;
+        font-size: 1.2rem;
+      }
+
+      .caption-actions p {
+        margin: 6px 0 0;
+        color: var(--text-soft);
+      }
+
+      #captionOutput {
+        min-height: 148px;
+        resize: vertical;
+        line-height: 1.7;
+      }
+
+      .helper-text {
+        color: var(--text-soft);
+        font-size: 0.88rem;
+      }
+
+      [hidden] {
+        display: none !important;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      @keyframes rise {
+        from {
+          opacity: 0;
+          transform: translateY(12px);
+        }
+
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @media (max-width: 960px) {
+        .hero {
+          grid-template-columns: 1fr;
+        }
+
+        .results-header,
+        .caption-actions,
+        .section-title {
+          align-items: start;
+          flex-direction: column;
+        }
+      }
+
+      @media (max-width: 720px) {
+        .page-shell {
+          width: min(100% - 20px, 1240px);
+          padding-top: 18px;
+          padding-bottom: 36px;
+        }
+
+        .hero-copy,
+        .hero-side,
+        .composer,
+        .caption-panel {
+          padding: 22px;
+        }
+
+        .format-picker {
+          grid-template-columns: 1fr;
+        }
+
+        .slides-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+    <link rel="stylesheet" href="/app.css" />
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="hero">
+        <section class="panel hero-copy">
+          <div class="hero-chip">Cuemath AI Builder Challenge</div>
+          <h1>Turn rough ideas into ready-to-post social creatives.</h1>
+          <p>
+            Generate polished Instagram posts, stories, and carousels for Indian parents,
+            then edit the copy, preview the design, and export each slide as a PNG in one flow.
+          </p>
+          <div class="hero-metrics">
+            <div class="metric-pill">Warm, simple, parent-friendly tone</div>
+            <div class="metric-pill">Built for 1:1, 9:16, and carousel formats</div>
+            <div class="metric-pill">Caption + hashtags included</div>
+          </div>
+        </section>
+
+        <aside class="panel hero-side">
+          <div class="palette-row">
+            <h2>Brand Palette</h2>
+            <div class="palette-item">
+              <strong>Primary</strong>
+              <div style="display: flex; align-items: center; gap: 10px">
+                <span class="swatch" style="background: #ff6b00"></span>
+                <span>#FF6B00</span>
+              </div>
+            </div>
+            <div class="palette-item">
+              <strong>Secondary</strong>
+              <div style="display: flex; align-items: center; gap: 10px">
+                <span class="swatch" style="background: #1a1a2e"></span>
+                <span>#1A1A2E</span>
+              </div>
+            </div>
+            <div class="palette-item">
+              <strong>Accent</strong>
+              <div style="display: flex; align-items: center; gap: 10px">
+                <span class="swatch" style="background: #ffd700"></span>
+                <span>#FFD700</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="spec-row">
+            <h2>Format Specs</h2>
+            <div class="spec-card">
+              <strong>Post</strong>
+              <span>1080 x 1080</span>
+            </div>
+            <div class="spec-card">
+              <strong>Story</strong>
+              <span>1080 x 1920</span>
+            </div>
+            <div class="spec-card">
+              <strong>Carousel</strong>
+              <span>3-5 slides | 1080 x 1080</span>
+            </div>
+          </div>
+        </aside>
+      </header>
+
+      <main class="layout">
+        <section class="panel composer">
+          <div class="section-title">
+            <div>
+              <h2>Creative Brief</h2>
+              <p>Describe the idea in a rough, natural way and choose the output format.</p>
+            </div>
+            <span class="helper-text" id="formatStatus">Selected format: Post</span>
+          </div>
+
+          <form id="generatorForm">
+            <div class="field-group">
+              <label class="field-label" for="ideaInput">Describe your content idea...</label>
+              <textarea
+                id="ideaInput"
+                placeholder="Example: Help parents build calm math homework routines without turning evenings into a fight."
+              ></textarea>
+            </div>
+
+            <div class="field-group">
+              <span class="field-label">Format</span>
+              <div class="format-picker" role="group" aria-label="Choose output format">
+                <button class="format-pill active" data-format="post" type="button">Post</button>
+                <button class="format-pill" data-format="story" type="button">Story</button>
+                <button class="format-pill" data-format="carousel" type="button">Carousel</button>
+              </div>
+            </div>
+
+            <div class="alert" id="errorBox"></div>
+
+            <button class="primary-button" id="generateButton" type="submit">
+              <span class="spinner" aria-hidden="true"></span>
+              <span id="generateButtonLabel">Generate creatives</span>
+            </button>
+          </form>
+        </section>
+
+        <section class="results" id="resultsSection">
+          <div class="results-header">
+            <div>
+              <h2>Slide Previews</h2>
+              <p id="resultsMeta">Generated slides will appear here with live editing controls.</p>
+            </div>
+          </div>
+
+          <div class="empty-state" id="emptyState">
+            Start with a content idea above to create a polished Cuemath social media asset.
+          </div>
+
+          <div class="slides-grid" id="slidesGrid"></div>
+        </section>
+
+        <section class="panel caption-panel" id="captionSection" hidden>
+          <div class="caption-actions">
+            <div>
+              <h2>Caption</h2>
+              <p>Edit the caption if needed, then copy it for your post.</p>
+            </div>
+            <button class="secondary-button" id="copyCaptionButton" type="button">
+              Copy caption
+            </button>
+          </div>
+          <textarea id="captionOutput" spellcheck="true"></textarea>
+        </section>
+      </main>
+    </div>
+    <script src="/vendor/html-to-image.js"></script>
+    <script src="/app.js"></script>
+    <script>
+      const FORMAT_META = {
+        post: { label: "Post", width: 1080, height: 1080, ratio: "1 / 1" },
+        story: { label: "Story", width: 1080, height: 1920, ratio: "9 / 16" },
+        carousel: { label: "Carousel", width: 1080, height: 1080, ratio: "1 / 1" },
+      };
+
+      const state = {
+        format: "post",
+        slides: [],
+        caption: "",
+        exportPrefix: "social-media-creative-post",
+      };
+      const FRIENDLY_GENERATION_ERROR = "Unable to generate content. Please try again.";
+
+      const generatorForm = document.getElementById("generatorForm");
+      const ideaInput = document.getElementById("ideaInput");
+      const formatButtons = Array.from(document.querySelectorAll("[data-format]"));
+      const generateButton = document.getElementById("generateButton");
+      const generateButtonLabel = document.getElementById("generateButtonLabel");
+      const errorBox = document.getElementById("errorBox");
+      const emptyState = document.getElementById("emptyState");
+      const slidesGrid = document.getElementById("slidesGrid");
+      const resultsMeta = document.getElementById("resultsMeta");
+      const formatStatus = document.getElementById("formatStatus");
+      const captionSection = document.getElementById("captionSection");
+      const captionOutput = document.getElementById("captionOutput");
+      const copyCaptionButton = document.getElementById("copyCaptionButton");
+      const resultsSection = document.getElementById("resultsSection");
+
+      function escapeHtml(value) {
+        return String(value ?? "")
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;")
+          .replace(/'/g, "&#39;");
+      }
+
+      function setFormat(format) {
+        state.format = format;
+        formatStatus.textContent = `Selected format: ${FORMAT_META[format].label}`;
+
+        formatButtons.forEach((button) => {
+          button.classList.toggle("active", button.dataset.format === format);
+        });
+      }
+
+      function setLoading(isLoading) {
+        generateButton.disabled = isLoading;
+        generateButton.classList.toggle("loading", isLoading);
+        generateButtonLabel.textContent = isLoading ? "Generating..." : "Generate creatives";
+      }
+
+      function showError(message) {
+        errorBox.textContent = message || "";
+        errorBox.classList.toggle("visible", Boolean(message));
+      }
+
+      function buildDotsMarkup(totalSlides, activeIndex) {
+        if (totalSlides <= 1) {
+          return "";
+        }
+
+        return `
+          <div class="preview-dots">
+            ${Array.from({ length: totalSlides }, (_item, index) => {
+              const activeClass = index === activeIndex ? "active" : "";
+              return `<i class="${activeClass}"></i>`;
+            }).join("")}
+          </div>
+        `;
+      }
+
+      function slideCardMarkup(slide, index, totalSlides) {
+        const formatMeta = FORMAT_META[state.format];
+        const formatClass = state.format === "story" ? "story" : "square";
+        const badgeText =
+          state.format === "carousel"
+            ? `${formatMeta.label} | Slide ${index + 1} of ${totalSlides}`
+            : `${formatMeta.label} | ${formatMeta.width} x ${formatMeta.height}`;
+
+        return `
+          <article class="slide-card" data-index="${index}">
+            <div class="slide-card-header">
+              <div class="slide-card-meta">
+                <strong>Slide ${index + 1}</strong>
+                <span>${badgeText}</span>
+              </div>
+              <button class="download-button" type="button" data-download-slide="${index}">
+                Download PNG
+              </button>
+            </div>
+
+            <div class="preview-shell ${formatClass}">
+              <div
+                class="slide-preview"
+                data-export-node
+                style="--preview-ratio: ${formatMeta.ratio}; --bg-color: ${escapeHtml(
+                  slide.bg_color
+                )}; --text-color: ${escapeHtml(slide.text_color)}; --accent-color: ${escapeHtml(
+                  slide.accent_color
+                )};"
+              >
+                <div class="preview-copy">
+                  <span class="preview-label">${escapeHtml(formatMeta.label)}</span>
+                  <h3 class="preview-headline" data-preview="headline">${escapeHtml(
+                    slide.headline
+                  )}</h3>
+                  <p class="preview-body" data-preview="body">${escapeHtml(slide.body)}</p>
+                  <div class="visual-pill">
+                    <span>Visual Direction</span>
+                    <strong data-preview="visual_description">${escapeHtml(
+                      slide.visual_description
+                    )}</strong>
+                  </div>
+                </div>
+                <div class="preview-watermark">Cuemath</div>
+                ${buildDotsMarkup(totalSlides, index)}
+              </div>
+            </div>
+
+            <div class="editor-grid">
+              <div class="editor-field">
+                <label for="headline-${index}">Headline</label>
+                <input
+                  id="headline-${index}"
+                  type="text"
+                  data-field="headline"
+                  value="${escapeHtml(slide.headline)}"
+                />
+              </div>
+              <div class="editor-field">
+                <label for="body-${index}">Body</label>
+                <textarea id="body-${index}" data-field="body">${escapeHtml(slide.body)}</textarea>
+              </div>
+              <div class="editor-field">
+                <label for="visual-${index}">Visual Description</label>
+                <textarea id="visual-${index}" data-field="visual_description">${escapeHtml(
+                  slide.visual_description
+                )}</textarea>
+              </div>
+            </div>
+
+            <div class="theme-row">
+              <span class="theme-chip">
+                <i style="background:${escapeHtml(slide.bg_color)}"></i>
+                BG ${escapeHtml(slide.bg_color)}
+              </span>
+              <span class="theme-chip">
+                <i style="background:${escapeHtml(slide.text_color)}"></i>
+                Text ${escapeHtml(slide.text_color)}
+              </span>
+              <span class="theme-chip">
+                <i style="background:${escapeHtml(slide.accent_color)}"></i>
+                Accent ${escapeHtml(slide.accent_color)}
+              </span>
+            </div>
+          </article>
+        `;
+      }
+
+      function renderSlides() {
+        if (!state.slides.length) {
+          emptyState.hidden = false;
+          slidesGrid.innerHTML = "";
+          resultsMeta.textContent =
+            "Generated slides will appear here with live editing controls.";
+          captionSection.hidden = true;
+          captionOutput.value = "";
+          return;
+        }
+
+        emptyState.hidden = true;
+        slidesGrid.innerHTML = state.slides
+          .map((slide, index) => slideCardMarkup(slide, index, state.slides.length))
+          .join("");
+
+        resultsMeta.textContent =
+          state.format === "carousel"
+            ? `${state.slides.length} editable carousel slides ready to review and export.`
+            : "Your generated slide is ready to edit and export.";
+
+        captionSection.hidden = !state.caption;
+        captionOutput.value = state.caption;
+      }
+
+      async function generateCreatives(event) {
+        event.preventDefault();
+        showError("");
+
+        const idea = ideaInput.value.trim();
+        if (!idea) {
+          showError("Add a content idea before generating creatives.");
+          ideaInput.focus();
+          return;
+        }
+
+        setLoading(true);
+
+        try {
+          const response = await fetch("/generate", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ idea, format: state.format }),
+          });
+
+          const payload = await response.json();
+          if (!response.ok) {
+            throw new Error(FRIENDLY_GENERATION_ERROR);
+          }
+
+          state.slides = Array.isArray(payload.slides) ? payload.slides : [];
+          state.caption = payload.caption || "";
+          state.exportPrefix =
+            response.headers.get("X-Export-Prefix") || `social-media-creative-${state.format}`;
+
+          renderSlides();
+          window.dispatchEvent(
+            new CustomEvent("studio:generation-success", {
+              detail: {
+                message: state.slides.length > 1 ? "Slides ready!" : "Content generated successfully",
+              },
+            })
+          );
+          resultsSection.scrollIntoView({ behavior: "smooth", block: "start" });
+        } catch (error) {
+          console.error("Generate request failed:", error);
+          state.slides = [];
+          state.caption = "";
+          renderSlides();
+          showError(FRIENDLY_GENERATION_ERROR);
+          window.dispatchEvent(
+            new CustomEvent("studio:generation-error", {
+              detail: { message: FRIENDLY_GENERATION_ERROR },
+            })
+          );
+        } finally {
+          setLoading(false);
+        }
+      }
+
+      async function downloadSlide(index) {
+        const card = slidesGrid.querySelector(`.slide-card[data-index="${index}"]`);
+        const previewNode = card?.querySelector("[data-export-node]");
+        const button = card?.querySelector(`[data-download-slide="${index}"]`);
+        const formatMeta = FORMAT_META[state.format];
+
+        if (!previewNode || !button) {
+          return;
+        }
+
+        if (!window.htmlToImage || typeof window.htmlToImage.toPng !== "function") {
+          showError("The PNG export library did not load. Refresh the page and try again.");
+          return;
+        }
+
+        button.disabled = true;
+        button.textContent = "Preparing...";
+
+        try {
+          const dataUrl = await window.htmlToImage.toPng(previewNode, {
+            cacheBust: true,
+            pixelRatio: 1,
+            backgroundColor: state.slides[index].bg_color,
+            width: formatMeta.width,
+            height: formatMeta.height,
+            canvasWidth: formatMeta.width,
+            canvasHeight: formatMeta.height,
+            style: {
+              width: `${formatMeta.width}px`,
+              height: `${formatMeta.height}px`,
+            },
+          });
+
+          const link = document.createElement("a");
+          link.href = dataUrl;
+          link.download = `${state.exportPrefix}-slide-${index + 1}.png`;
+          link.click();
+        } catch (error) {
+          console.error(error);
+          showError("Could not export that slide as a PNG. Please try again.");
+        } finally {
+          button.disabled = false;
+          button.textContent = "Download PNG";
+        }
+      }
+
+      async function copyCaption() {
+        const value = captionOutput.value.trim();
+        if (!value) {
+          return;
+        }
+
+        try {
+          await navigator.clipboard.writeText(value);
+        } catch (_error) {
+          captionOutput.focus();
+          captionOutput.select();
+          document.execCommand("copy");
+        }
+
+        copyCaptionButton.textContent = "Copied";
+        window.dispatchEvent(
+          new CustomEvent("studio:caption-copied", {
+            detail: { message: "Copied to clipboard!" },
+          })
+        );
+        window.setTimeout(() => {
+          copyCaptionButton.textContent = "Copy caption";
+        }, 1400);
+      }
+
+      formatButtons.forEach((button) => {
+        button.addEventListener("click", () => {
+          setFormat(button.dataset.format);
+        });
+      });
+
+      generatorForm.addEventListener("submit", generateCreatives);
+
+      slidesGrid.addEventListener("input", (event) => {
+        const field = event.target.dataset.field;
+        if (!field) {
+          return;
+        }
+
+        const card = event.target.closest(".slide-card");
+        const index = Number(card?.dataset.index);
+        if (Number.isNaN(index) || !state.slides[index]) {
+          return;
+        }
+
+        state.slides[index][field] = event.target.value;
+        const previewTarget = card.querySelector(`[data-preview="${field}"]`);
+        if (previewTarget) {
+          previewTarget.textContent = event.target.value;
+        }
+      });
+
+      slidesGrid.addEventListener("click", (event) => {
+        const button = event.target.closest("[data-download-slide]");
+        if (!button) {
+          return;
+        }
+
+        const index = Number(button.dataset.downloadSlide);
+        if (Number.isNaN(index)) {
+          return;
+        }
+
+        downloadSlide(index);
+      });
+
+      copyCaptionButton.addEventListener("click", copyCaption);
+      captionOutput.addEventListener("input", () => {
+        state.caption = captionOutput.value;
+      });
+
+      setFormat("post");
+    </script>
+  </body>
+</html>

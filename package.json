@@ -1,0 +1,16 @@
+{
+  "name": "social-media-studio",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Social Media Studio for the Cuemath AI Builder challenge",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "axios": "^1.13.1",
+    "dotenv": "^16.6.1",
+    "express": "^5.1.0",
+    "html-to-image": "^1.11.13"
+  }
+}
