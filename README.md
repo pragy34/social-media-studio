@@ -1,73 +1,198 @@
 # Social Media Studio
 
-Social Media Studio is a clean full-stack web app for the Cuemath AI Builder challenge. It takes a rough content idea, generates polished social media slides with Gemini, previews them instantly, lets you edit the copy, and exports each slide as a PNG.
+> Turn a rough idea into a ready-to-post Instagram creative in seconds.
 
-## Project Overview
+a full-stack AI-powered studio that generates polished social media content for educational brands targeting Indian parents.
 
-- Input: content idea + format selection (`post`, `story`, or `carousel`)
-- Output: structured slide content, rendered visual previews, editable copy, downloadable images, and a caption with hashtags
-- Brand system: Cuemath palette, Inter font, warm tone, and parent-friendly writing for Indian parents
+**Live Demo:** [your-app.onrender.com](https://your-app.onrender.com)  
+**Video Walkthrough:** [loom link here]
 
-## Folder Structure
+---
 
-```text
-project/
-|- backend/
-|  |- routes/
-|  |  |- generate.js
-|  |- services/
-|  |  |- aiService.js
-|  |  |- exportService.js
-|  |  |- renderService.js
-|  |- utils/
-|  |  |- brandContext.js
-|  |- server.js
-|- frontend/
-|  |- index.html
-|- package.json
-|- server.js
-|- README.md
+## What It Does
+
+You type a rough idea. The app returns:
+
+- Structured slide content (headline, body, visual direction)
+- Live editable preview in the browser
+- Instagram caption with hashtags
+- Downloadable PNG per slide
+
+Supports three formats: **Post (1:1)**, **Story (9:16)**, and **Carousel (multi-slide)**.
+
+---
+
+## Tech Stack
+
+| Layer | Technology |
+|---|---|
+| Backend | Node.js + Express |
+| AI | Groq API — LLaMA 3 (8B) |
+| Frontend | Vanilla HTML + CSS + JS |
+| Export | Client-side PNG via html-to-image |
+| Deployment | Render |
+
+---
+
+## Project Structure
+
 ```
+project/
+├── backend/
+│   ├── server.js           — Express app entry point
+│   ├── routes/
+│   │   └── generate.js     — POST /generate route
+│   ├── services/
+│   │   ├── aiService.js    — Groq API call + JSON parsing + fallback
+│   │   ├── renderService.js — Converts slide JSON to styled HTML
+│   │   └── exportService.js — PNG export logic
+│   └── utils/
+│       └── brandContext.js  — Brand config injected into every AI prompt
+├── frontend/
+│   ├── index.html
+│   ├── app.css
+│   └── app.js
+├── package.json
+└── README.md
+```
+
+---
+
+## How It Works
+
+```
+User types idea + picks format
+        ↓
+Frontend sends POST /generate
+        ↓
+Backend injects brand context into prompt
+        ↓
+Groq API (LLaMA 3) returns structured JSON
+        ↓
+Backend cleans + validates response
+        ↓
+Slides rendered in browser
+        ↓
+User edits content → downloads PNG
+```
+
+---
+
+## Brand System
+
+Every AI prompt is automatically injected with Cuemath's brand rules:
+
+- **Primary:** `#FF6B00` — Orange
+- **Secondary:** `#1A1A2E` — Dark Navy
+- **Accent:** `#FFD700` — Gold
+- **Font:** Inter
+- **Tone:** Warm, simple, parent-friendly
+- **Audience:** Indian parents of school-going children
+
+---
 
 ## Setup
 
+**1. Clone and install**
+
 ```bash
+git clone https://github.com/your-username/social-studio
+cd social-studio
 npm install
 ```
 
-## Set `GEMINI_API_KEY`
+**2. Set your API key**
 
-PowerShell:
-
-```powershell
-$env:GEMINI_API_KEY="your_api_key_here"
-```
-
-Or create a local `.env` file in the project root:
+Create a `.env` file in the root:
 
 ```env
-GEMINI_API_KEY=your_api_key_here
+GROQ_API_KEY=your_groq_api_key_here
 ```
 
-## Run
+Get a free key at [console.groq.com](https://console.groq.com) — no credit card needed.
+
+**3. Run locally**
 
 ```bash
 node server.js
 ```
 
-The app will be available at `http://localhost:3000`.
+Open [http://localhost:3000](http://localhost:3000)
 
-## How It Works
+---
 
-- `backend/server.js` configures Express, serves the single-file frontend, and exposes `/generate`
-- `backend/routes/generate.js` validates input, calls Gemini, normalizes the response, and sends the structured JSON back to the client
-- `backend/services/aiService.js` builds the Gemini system prompt, injects the brand context, requests schema-constrained JSON, and parses the JSON response safely with `JSON.parse()` inside `try/catch`
-- `backend/services/renderService.js` keeps slide layout and color handling consistent for the generated content
-- `backend/services/exportService.js` creates clean export file names for PNG downloads
-- `frontend/index.html` contains the complete UI, live editing, preview cards, caption tools, and client-side PNG export with `html-to-image`
+## API Reference
 
-## Notes
+### `POST /generate`
 
-- The API key is used only on the backend and is never exposed to the browser
-- `post` and `story` generate a single slide
-- `carousel` generates 3 to 5 slides with a hook, explanation, and CTA flow
+**Request**
+```json
+{
+  "idea": "Why Indian kids forget what they study",
+  "format": "carousel"
+}
+```
+
+**Response**
+```json
+{
+  "slides": [
+    {
+      "slide_number": 1,
+      "headline": "Your child isn't forgetting. They're just not reviewing.",
+      "body": "Research shows we forget 70% of new information within 24 hours without review.",
+      "visual_description": "Warm illustration of a child at a desk, textbook open",
+      "bg_color": "#FFF4E6",
+      "text_color": "#1A1A2E",
+      "accent_color": "#FF6B00"
+    }
+  ],
+  "caption": "Did you know most students forget new concepts within a day? ..."
+}
+```
+
+---
+
+## Key Engineering Decisions
+
+**Why Groq over OpenAI/Gemini?**  
+Groq's free tier is fast and stable for structured JSON generation. Gemini throttled too aggressively at low request volumes. Groq's LLaMA 3 model returns consistent output for this use case.
+
+**Why a strict JSON-only prompt?**  
+LLMs often wrap JSON in markdown or add explanations. The backend strips fences, extracts the JSON object by brace matching, and validates structure before sending to frontend. If validation fails, a fallback slide builder uses the raw text gracefully instead of crashing.
+
+**Why Render over Vercel?**  
+This project runs a persistent Express server with stateful routes. Vercel converts backends to serverless functions which causes timeout and routing issues with Express. Render runs `node server.js` exactly as local.
+
+---
+
+## Deployment
+
+Deployed on **Render** (free tier).
+
+Environment variable to set in Render dashboard:
+```
+GROQ_API_KEY = your_key_here
+```
+
+Start command:
+```bash
+node server.js
+```
+
+Ensure `server.js` uses dynamic port:
+```javascript
+const PORT = process.env.PORT || 3000;
+app.listen(PORT);
+```
+
+---
+
+
+---
+
+## Author
+
+**Pragy Upadhyay**  
+Final Year B.Tech ECE — JIIT Noida  
+[LinkedIn](https://linkedin.com/in/pragy-upadhyay-893895246) · [GitHub](https://github.com/pragy34)
