@@ -126,8 +126,7 @@ function normalizeSlide(slide, index, totalSlides, format) {
 
 function normalizeSlides(slides, format) {
   const safeSlides = Array.isArray(slides) ? slides.slice() : [];
-  const requestedTotal =
-    format === "carousel" ? Math.min(5, Math.max(3, safeSlides.length || 3)) : 1;
+  const requestedTotal = format === "carousel" ? 3 : 1;
 
   while (safeSlides.length < requestedTotal) {
     safeSlides.push(createFallbackSlide(safeSlides.length, requestedTotal, format));

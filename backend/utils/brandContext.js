@@ -26,7 +26,7 @@ const FORMAT_RULES = Object.freeze({
   },
   carousel: {
     label: "Instagram Carousel",
-    slideCount: "3 to 5 slides",
+    slideCount: "exactly 3 slides",
     dimensions: {
       width: 1080,
       height: 1080,

@@ -1,16 +1,14 @@
 const axios = require("axios");
 
-const { FORMAT_RULES, getBrandPromptContext } = require("../utils/brandContext");
+const { FORMAT_RULES } = require("../utils/brandContext");
 
 const USER_FACING_ERROR = "Unable to generate content. Please try again.";
 const GROQ_CHAT_URL = "https://api.groq.com/openai/v1/chat/completions";
-// Groq retired older IDs (e.g. llama3-8b-8192, mixtral-8x7b-32768). Use current production IDs from console.groq.com/docs/models
-const GROQ_MODELS = [
-  "llama-3.1-8b-instant",
-  "llama-3.3-70b-versatile",
-  "openai/gpt-oss-20b",
-];
+// Fast/cheap first; skip gpt-oss-20b (tight 8k total limits on free tier). See console.groq.com/docs/models
+const GROQ_MODELS = ["llama-3.1-8b-instant", "llama-3.3-70b-versatile"];
 const GROQ_TIMEOUT_MS = 10_000;
+/** Keeps prompt + completion under Groq free-tier limits */
+const GROQ_MAX_TOKENS = 1500;
 
 console.log("[Groq] Model fallback chain:", GROQ_MODELS.join(" → "));
 
@@ -30,12 +28,6 @@ function normalizeGroqApiKey(raw) {
   }
   return key;
 }
-const STRICT_JSON_INSTRUCTION = `Return ONLY valid JSON.
-Do not include markdown, code fences, explanations, or any extra text.
-Your response must start with { and end with }.
-If the format is carousel, return 3-5 slides.
-If the format is post or story, return exactly 1 slide.`;
-
 function logGroqAxiosError(context, model, error) {
   const status = error.response?.status;
   const data = error.response?.data;
@@ -68,7 +60,7 @@ async function generateContent(prompt) {
         {
           model,
           messages: [{ role: "user", content: prompt }],
-          max_tokens: 8192,
+          max_tokens: GROQ_MAX_TOKENS,
         },
         {
           headers: {
@@ -123,25 +115,20 @@ function createServiceError(message, options = {}) {
 
 function buildGenerationPrompt({ idea, format }) {
   const formatRule = FORMAT_RULES[format] || FORMAT_RULES.post;
+  const dims = `${formatRule.dimensions.width}x${formatRule.dimensions.height}`;
+  const slideRule =
+    format === "carousel" ? "Exactly 3 slides." : "Exactly 1 slide.";
+  const trimmedIdea = String(idea || "").trim().slice(0, 2_000);
 
   return [
-    "You are a senior social media strategist for Cuemath.",
-    STRICT_JSON_INSTRUCTION,
-    getBrandPromptContext(format),
-    "Generation rules:",
-    "- Follow the flow: hook -> content -> CTA.",
-    "- Keep the writing warm, simple, helpful, and parent-friendly.",
-    "- Write for busy Indian parents who want confidence and clarity.",
-    "- Keep headlines crisp and bold.",
-    "- Every slide must include headline, body, visual_description, bg_color, text_color, and accent_color.",
-    "- Use only these colors: #FF6B00, #1A1A2E, #FFFFFF, #FFF4E6, #FFD700.",
-    "- Use six-digit hex colors.",
-    `- Target format: ${formatRule.label}.`,
-    `- Canvas size: ${formatRule.dimensions.width}x${formatRule.dimensions.height}.`,
-    "Return this exact top-level shape:",
-    '{"slides":[{"slide_number":1,"headline":"string","body":"string","visual_description":"string","bg_color":"#RRGGBB","text_color":"#RRGGBB","accent_color":"#RRGGBB"}],"caption":"string with hashtags"}',
-    `Content idea: ${idea}`,
-  ].join("\n");
+    "Generate social media slides as JSON only. Cuemath. Warm, short, parent-friendly.",
+    "Return valid JSON only (no markdown). Start with {.",
+    slideRule,
+    `Each slide: slide_number, headline, body, visual_description, bg_color, text_color, accent_color.`,
+    `Hex colors only from: #FF6B00 #1A1A2E #FFFFFF #FFF4E6 #FFD700.`,
+    `Format: ${formatRule.label}. Canvas ${dims}.`,
+    `Shape: {"slides":[...],"caption":"..."} Idea: ${trimmedIdea}`,
+  ].join(" ");
 }
 
 function cleanJsonText(rawText) {
@@ -163,7 +150,7 @@ function cleanJsonText(rawText) {
 function validateStructuredResponse(parsed, format) {
   const slideCount = Array.isArray(parsed?.slides) ? parsed.slides.length : 0;
   const isValidCount =
-    format === "carousel" ? slideCount >= 3 && slideCount <= 5 : slideCount === 1;
+    format === "carousel" ? slideCount === 3 : slideCount === 1;
 
   if (!parsed || !Array.isArray(parsed.slides) || typeof parsed.caption !== "string") {
     throw createServiceError("Groq response is missing required fields.", {
@@ -173,7 +160,7 @@ function validateStructuredResponse(parsed, format) {
 
   if (!isValidCount) {
     throw createServiceError("Groq response has an invalid slide count.", {
-      details: `Expected ${format === "carousel" ? "3-5" : "1"} slides but received ${slideCount}.`,
+      details: `Expected ${format === "carousel" ? "3" : "1"} slides but received ${slideCount}.`,
     });
   }
 }
