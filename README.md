@@ -5,7 +5,7 @@
 A full-stack AI-powered studio that generates polished social media content for educational brands targeting Indian parents.
 
 **Live Demo:** [your-app.onrender.com](https://social-media-studio.onrender.com/)  
-**Video Walkthrough:** [loom link here]
+
 
 ---
 
